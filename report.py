@@ -148,7 +148,8 @@ def create_report(root, files, output_dir, n_top):
                 ss[doi] = ss.get(doi, 0) + 1
             else:
                 fs[doi] = fs.get(doi, 0) + 1
-    prefixes = set([s[:7] for s in ss] + [f[:7] for f in fs])
+    dois = [s for s in ss] + [f for f in fs]
+    prefixes = set([r.group(1) for r in [re.search("^(10\.\d+)/", doi) for doi in dois] if r])
     prefixes.remove('10.5072') # test prefix
     prefix_successes = dict([(p, sum([int(ss[x]) for x in ss if x.startswith(p)])) for p in prefixes])
     prefix_failures = dict([(p, sum([int(fs[x]) for x in fs if x.startswith(p)])) for p in prefixes])
