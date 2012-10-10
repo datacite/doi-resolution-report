@@ -8,6 +8,7 @@ DOI_RESOLVER_URL = 'http://dx.doi.org/'
 CONTENT_RESOLVER_URL = 'http://data.datacite.org/'
 SEARCH_BY_PREFIX_URL = 'http://search.datacite.org/ui?q=*&fq=prefix:%s'
 SEARCH_DATACENTRE_BY_PREFIX_URL = 'http://search.datacite.org/list/datacentres?fq=prefix:%s&facet.mincount=1'
+TEST_PREFIX = '10.5072'
 
 __version__ = '1.0'
 __doc__ = '''Builds DOI resolution reports from CNRI logs.
@@ -150,7 +151,7 @@ def create_report(root, files, output_dir, n_top):
                 fs[doi] = fs.get(doi, 0) + 1
     dois = [s for s in ss] + [f for f in fs]
     prefixes = set([r.group(1) for r in [re.search("^(10\.\d+)/", doi) for doi in dois] if r])
-    prefixes.remove('10.5072') # test prefix
+    if TEST_PREFIX in prefixes: prefixes.remove(TEST_PREFIX)
     prefix_successes = dict([(p, sum([int(ss[x]) for x in ss if x.startswith(p)])) for p in prefixes])
     prefix_failures = dict([(p, sum([int(fs[x]) for x in fs if x.startswith(p)])) for p in prefixes])
     prefix_unique_doi_successes = dict([(p, len(set([x for x in ss if x.startswith(p)]))) for p in prefixes])
