@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, re, calendar, locale
-import markup, requests
+import markup, requests, cgi
 
 FILE_PATTERN = 'access_log*.gz'
 DOI_RESOLVER_URL = 'http://dx.doi.org/'
@@ -82,7 +82,7 @@ def generate_html(name,
         page.ol()
         for d in prefix_top_dois_s[p]:
             page.li()
-            page.a(d[0], href = DOI_RESOLVER_URL + d[0])
+            page.a(cgi.escape(d[0]), href = DOI_RESOLVER_URL + d[0])
             page.a(' meta', href = CONTENT_RESOLVER_URL + d[0])
             page.i(' (' + str(d[1]) + ')')
             page.li.close()
@@ -92,7 +92,7 @@ def generate_html(name,
         page.ol()
         for d in prefix_top_dois_f[p]:
             page.li()
-            page.a(d[0], href = DOI_RESOLVER_URL + d[0])
+            page.a(cgi.escape(d[0]), href = DOI_RESOLVER_URL + d[0])
             page.a(' meta', href = CONTENT_RESOLVER_URL + d[0])
             page.i(' (' + str(d[1]) + ')')
             page.li.close()
