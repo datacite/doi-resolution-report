@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, re, calendar, locale
+import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, re, calendar, locale, string
 import markup, requests, cgi
 
 FILE_PATTERN = 'access_log*.gz'
@@ -9,6 +9,7 @@ CONTENT_RESOLVER_URL = 'http://data.datacite.org/'
 SEARCH_BY_PREFIX_URL = 'http://search.datacite.org/ui?q=*&fq=prefix:%s'
 SEARCH_DATACENTRE_BY_PREFIX_URL = 'http://search.datacite.org/list/datacentres?fq=prefix:%s&facet.mincount=1'
 TEST_PREFIX = '10.5072'
+TRANS_DOI_NORMALIZE = string.maketrans(string.ascii_lowercase, string.ascii_uppercase)
 
 __version__ = '1.0'
 __doc__ = '''Builds DOI resolution reports from CNRI logs.
@@ -145,6 +146,7 @@ def create_report(root, files, output_dir, n_top):
             doi = line[6]
             if doi.startswith('doi:'):
                 doi = doi[4:]
+            doi = doi.translate(TRANS_DOI_NORMALIZE)
             if success:
                 ss[doi] = ss.get(doi, 0) + 1
             else:
