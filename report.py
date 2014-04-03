@@ -142,6 +142,7 @@ def create_report(root, files, output_dir, n_top):
         gz.close()
         lines = csv.reader(StringIO.StringIO(content), delimiter = ' ')
         for line in lines:
+            if len(line) < 7: continue # skip incomplete log lines
             success = line[4] == '1'
             doi = line[6]
             if doi.startswith('doi:'):
