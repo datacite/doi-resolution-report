@@ -134,9 +134,11 @@ def filter_by_p(dictionary, p):
     return dict([(k,dictionary[k]) for k in dictionary if k.startswith(p)])
 
 def create_report(root, files, output_dir, n_top):
+    print "report " + root
     ss = {} # success doi => int count
     fs ={} # failure doi => int count
     for file in files:
+        print "  file " + file
         gz = gzip.open(os.path.join(root, file))
         content = gz.read()
         gz.close()
