@@ -104,7 +104,7 @@ def generate_html(name,
     page.tr()
     page.td('Total')
     page.td()
-    locale.setlocale(locale.LC_ALL, 'en_US')
+    locale.setlocale(locale.LC_ALL, 'en_US.utf8')
     page.td(locale.format("%d", sum(prefix_successes.values()) + sum(prefix_failures.values()), grouping=True))
     page.td(locale.format("%d", sum(prefix_successes.values()), grouping=True))
     page.td(locale.format("%d", sum(prefix_failures.values()), grouping=True))
