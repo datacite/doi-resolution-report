@@ -3,7 +3,8 @@
 import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, re, calendar, locale, string
 import markup, requests, cgi
 
-FILE_PATTERN = 'access_log*.gz'
+FILE_PATTERN = '*.gz'
+DIR_PATTERN = '*/datacite_logs_[0-9][0-9][0-9][0-9][0-9][0-9]'
 DOI_RESOLVER_URL = 'http://dx.doi.org/'
 CONTENT_RESOLVER_URL = 'http://data.datacite.org/'
 SEARCH_BY_PREFIX_URL = 'http://search.datacite.org/ui?q=*&fq=prefix:%s'
@@ -213,7 +214,7 @@ def main():
             files_by_dir[ft[0]] = []
         files_by_dir[ft[0]].append(ft[1])
     reports = []
-    for d in files_by_dir:
+    for d in fnmatch.filter(files_by_dir, DIR_PATTERN):
         r = create_report(d, files_by_dir[d], args[1], opts.n_top)
         reports.append(r)
     create_index_page(reports, args[1])
