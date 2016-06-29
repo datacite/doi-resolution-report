@@ -139,7 +139,7 @@ def create_report(root, files, output_dir, n_top):
     ss = {} # success doi => int count
     fs ={} # failure doi => int count
     for file in files:
-        print "  file " + file
+        print "  loading file " + file
         file_abs = os.path.join(root, file)
         if re.search("\.gz$",file):
             gz = gzip.open(file_abs)
@@ -161,7 +161,7 @@ def create_report(root, files, output_dir, n_top):
             else:
                 fs[doi] = fs.get(doi, 0) + 1
         stream.close()
-
+    print "  calculating stats"
     dois = [s for s in ss] + [f for f in fs]
     prefixes = set([r.group(1) for r in [re.search("^(10\.\d+)/", doi) for doi in dois] if r])
     if TEST_PREFIX in prefixes: prefixes.remove(TEST_PREFIX)
@@ -171,6 +171,7 @@ def create_report(root, files, output_dir, n_top):
     prefix_unique_doi_failures = dict([(p, len(set([x for x in fs if x.startswith(p)]))) for p in prefixes])
     prefix_top_dois_s = dict([(p, sorted(filter_by_p(ss, p).iteritems(), key=operator.itemgetter(1), reverse=True)[:int(n_top)]) for p in prefixes])
     prefix_top_dois_f = dict([(p, sorted(filter_by_p(fs, p).iteritems(), key=operator.itemgetter(1), reverse=True)[:int(n_top)]) for p in prefixes])
+    print "  generating html report"
     return generate_html(root.split('/')[-1],
         output_dir,
         n_top,
