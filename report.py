@@ -3,7 +3,7 @@
 import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, re, calendar, locale, string
 import markup, requests, cgi
 
-FILE_PATTERN = '*.gz'
+FILE_PATTERN = '*access?log*'
 DIR_PATTERN = '*/datacite_logs_[0-9][0-9][0-9][0-9][0-9][0-9]'
 DOI_RESOLVER_URL = 'http://dx.doi.org/'
 CONTENT_RESOLVER_URL = 'http://data.datacite.org/'
@@ -140,10 +140,15 @@ def create_report(root, files, output_dir, n_top):
     fs ={} # failure doi => int count
     for file in files:
         print "  file " + file
-        gz = gzip.open(os.path.join(root, file))
-        content = gz.read()
-        gz.close()
-        lines = csv.reader(StringIO.StringIO(content), delimiter = ' ')
+        file_abs = os.path.join(root, file)
+        if re.search("\.gz$",file):
+            gz = gzip.open(file_abs)
+            content = gz.read()
+            gz.close()
+            stream = StringIO.StringIO(content)
+        else:
+            stream = open(file_abs)
+        lines = csv.reader(stream, delimiter = ' ')
         for line in lines:
             if len(line) < 7: continue # skip incomplete log lines
             success = line[4] == '1'
@@ -155,6 +160,8 @@ def create_report(root, files, output_dir, n_top):
                 ss[doi] = ss.get(doi, 0) + 1
             else:
                 fs[doi] = fs.get(doi, 0) + 1
+        stream.close()
+
     dois = [s for s in ss] + [f for f in fs]
     prefixes = set([r.group(1) for r in [re.search("^(10\.\d+)/", doi) for doi in dois] if r])
     if TEST_PREFIX in prefixes: prefixes.remove(TEST_PREFIX)
