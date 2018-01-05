@@ -163,12 +163,18 @@ def create_report(root, files, output_dir, n_top):
         stream.close()
     print "  calculating stats"
     dois = [s for s in ss] + [f for f in fs]
+    print "  collecting DOIs"
     prefixes = set([r.group(1) for r in [re.search("^(10\.\d+)/", doi) for doi in dois] if r])
     if TEST_PREFIX in prefixes: prefixes.remove(TEST_PREFIX)
+    print "  removing test prefixes"
     prefix_successes = dict([(p, sum([int(ss[x]) for x in ss if x.startswith(p)])) for p in prefixes])
+    print "  done  calculating prefix_successes"
     prefix_failures = dict([(p, sum([int(fs[x]) for x in fs if x.startswith(p)])) for p in prefixes])
+    print "  done  calculating prefix_failures"
     prefix_unique_doi_successes = dict([(p, len(set([x for x in ss if x.startswith(p)]))) for p in prefixes])
+    print "  done  calculating prefix_unique_doi_successes"
     prefix_unique_doi_failures = dict([(p, len(set([x for x in fs if x.startswith(p)]))) for p in prefixes])
+    print "  done  calculating prefix_unique_doi_failures"
     prefix_top_dois_s = dict([(p, sorted(filter_by_p(ss, p).iteritems(), key=operator.itemgetter(1), reverse=True)[:int(n_top)]) for p in prefixes])
     prefix_top_dois_f = dict([(p, sorted(filter_by_p(fs, p).iteritems(), key=operator.itemgetter(1), reverse=True)[:int(n_top)]) for p in prefixes])
     print "  generating html report"
@@ -223,6 +229,8 @@ def main():
         files_by_dir[ft[0]].append(ft[1])
     reports = []
     for d in fnmatch.filter(files_by_dir, DIR_PATTERN):
+        if not os.path.exists(args[1]):
+            raise ValueError('folder does not exist')
         r = create_report(d, files_by_dir[d], args[1], opts.n_top)
         reports.append(r)
     create_index_page(reports, args[1])
