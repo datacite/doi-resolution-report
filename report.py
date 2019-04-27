@@ -4,12 +4,12 @@ import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, r
 import markup, requests, cgi
 
 FILE_PATTERN = '*access?log*'
-DIR_PATTERN = '*/datacite_logs_[0-9][0-9][0-9][0-9][0-9][0-9]'
+DIR_PATTERN = '*datacite_logs_[0-9][0-9][0-9][0-9][0-9][0-9]'
 DOI_RESOLVER_URL = 'http://dx.doi.org/'
-CONTENT_RESOLVER_URL = 'http://data.datacite.org/'
-SEARCH_BY_PREFIX_URL = 'http://search.datacite.org/ui?q=*&fq=prefix:%s'
-SEARCH_DATACENTRE_BY_PREFIX_URL = 'http://search.datacite.org/list/datacentres?fq=prefix:%s&facet.mincount=1'
-TEST_PREFIX = '10.5072'
+CONTENT_RESOLVER_URL = 'https://data.datacite.org/'
+SEARCH_BY_PREFIX_URL = 'https://search.datacite.org/works?query=prefix:%s'
+SEARCH_DATACENTRE_BY_PREFIX_URL = 'https://search.datacite.org/list/datacentres?fq=prefix:%s&facet.mincount=1'
+TEST_PREFIX = '10.5072' 
 TRANS_DOI_NORMALIZE = string.maketrans(string.ascii_lowercase, string.ascii_uppercase)
 
 __version__ = '1.0'
@@ -24,6 +24,7 @@ def timestamp():
     return datetime.datetime.utcnow().strftime("%Y-%m-%d-%H%MZ")
 
 def get_datacentres(prefix):
+    print prefix
     symbols = requests.get(SEARCH_DATACENTRE_BY_PREFIX_URL % prefix).text
     for symbol in symbols.split('\n'):
         yield symbol.split(' ')[0]
