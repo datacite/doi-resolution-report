@@ -4,6 +4,7 @@ import optparse, datetime, fnmatch, os, gzip, StringIO, csv, shutil, operator, r
 import markup, requests, cgi
 import json
 
+SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 FILE_PATTERN = '*access?log*'
 DIR_PATTERN = '*datacite_logs_[0-9][0-9][0-9][0-9][0-9][0-9]'
 DOI_RESOLVER_URL = 'http://dx.doi.org/'
@@ -11,7 +12,7 @@ CONTENT_RESOLVER_URL = 'https://data.datacite.org/'
 SEARCH_BY_PREFIX_URL = 'https://search.datacite.org/works?query=prefix:%s'
 SEARCH_DATACENTRE_BY_PREFIX_URL = 'https://api.datacite.org/prefixes/%s'
 
-TEST_PREFIX = '10.5072' 
+TEST_PREFIX = '10.5072'
 TRANS_DOI_NORMALIZE = string.maketrans(string.ascii_lowercase, string.ascii_uppercase)
 
 __version__ = '1.0'
@@ -209,7 +210,7 @@ def create_index_page(reports, output_dir):
 
     static_target = os.path.join(output_dir, 'static')
     if not os.path.exists(static_target):
-        shutil.copytree('static', static_target)
+        shutil.copytree(SCRIPT_PATH + '/static', static_target)
     index_file_name = os.path.join(output_dir, 'index.html')
     with open(index_file_name, 'w') as f:
         f.write(str(page))
